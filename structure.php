@@ -45,14 +45,15 @@ function gnma_do_nav() {
             $nav = wp_nav_menu( array(
                         'theme_location' => 'primary',
                         'container' => '',
-                        'menu_class' => genesis_get_option( 'nav_superfish' ) ? 'menu-secondary menu nav superfish' : 'secondary-menu menu nav',
+                        'menu_class' => 'menu genesis-nav-menu menu-primary'.( genesis_get_option( 'nav_superfish' ) ? ' superfish' : '' ),
                         'echo' => 0
                             ) );
         } else {
 
             $nav = genesis_nav( array(
                         'theme_location' => 'primary',
-                        'menu_class' => genesis_get_option( 'nav_superfish' ) ? 'menu-primary menu nav superfish' : 'primary-menu menu nav',
+                        'menu_class' => 'menu genesis-nav-menu menu-primary'.( genesis_get_option( 'nav_superfish' ) ? ' superfish' : '' ),
+                        'menu_id' => 'menu-main-menu',
                         'show_home' => genesis_get_option( 'nav_home' ),
                         'type' => genesis_get_option( 'nav_type' ),
                         'sort_column' => genesis_get_option( 'nav_pages_sort' ),
@@ -64,7 +65,29 @@ function gnma_do_nav() {
                             ) );
         }
 
-        echo '<div id="nav"><div class="wrap">' . $nav . '</div></div>';
+        // These will need to be updated every now and then when Genesis changes things.
+        $nav_opener = '<nav class="nav-primary" role="navigation" itemscope="itemscope" itemtype="http://schema.org/SiteNavigationElement"><div class="wrap">';
+        $nav_closer = '</div></div>';
+
+
+        $replacings = array(
+
+            'page_item page-item-23 page_item_has_children' => 'menu-item menu-item-type-post_type menu-item-object-page menu-item-has-children menu-item-64',
+            'page_item' => 'menu-item',
+            'page_item_has_children' => 'menu-item-has-children',
+            'children' => 'sub-menu',
+
+            ); 
+            // so, the problem makes sense to me now. Genesis styling is for MENUS. They are targeting menu-items. In custom menus, what's added are literally menu-items.
+            // that's bad for us because we're not using menu-items, we're just querying page items. literal pages. so, the naming output is right. 
+            // what that means is that rather than doing this (though I am indeed going to do this... the real fix here is to duplicate the menus portion of Genesis CSS (and all child themes.... okay maybe not so much!) ) 
+
+        foreach ( $replacings as $from => $to )
+        {
+            $nav = str_replace($from, $to, $nav);
+        }
+
+        echo $nav_opener . $nav .  $nav_closer;
     }
 }
 
