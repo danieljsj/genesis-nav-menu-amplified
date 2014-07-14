@@ -76,6 +76,7 @@ function gnma_do_nav() {
             'page_item' => 'menu-item',
             'page_item_has_children' => 'menu-item-has-children',
             'children' => 'sub-menu',
+            '>SafeGenerations<' => '>Home<'
 
             ); 
             // so, the problem makes sense to me now. Genesis styling is for MENUS. They are targeting menu-items. In custom menus, what's added are literally menu-items.
